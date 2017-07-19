@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
-import {View, StyleSheet} from 'react-native';
-import {Container, Content, Header, Left, Body, Right, Text, Title, Icon} from 'native-base';
+import {} from 'react-native';
+import {Container, Content, Header, Left, Body, Right, Text, Title, ListItem, List, Thumbnail, Item, Input, Icon} from 'native-base';
 
 export default class Chats extends Component {
 
   static navigationOptions = {
-    tabBarLabel: 'Chats',
+    title: 'Chats',
     tabBarIcon: ({ tintColor }) => (
       <Icon name="chatbubbles" style={{color:tintColor}}/>
     ),
@@ -23,22 +23,59 @@ export default class Chats extends Component {
     );
   }
 
+  _renderRow(){
+    return (
+      <ListItem avatar>
+        <Left>
+          <Thumbnail source={{ uri: 'https://bootdey.com/img/Content/avatar/avatar6.png' }} />
+        </Left>
+        <Body>
+          <Text>Kumar Pratik</Text>
+          <Text note>Doing what you like...</Text>
+        </Body>
+        <Right>
+          <Text note>3:43 pm</Text>
+        </Right>
+      </ListItem>
+    )
+  }
+
   render(){
     return (
       <Container>
+
         {this._renderHeader()}
+
+        {/* === Content Start === */}
         <Content>
-          <Text>This is Chats page</Text>
+          {/* Search Bar */}
+          <Item rounded style={styles.searchBar}>
+            <Icon name="search" style={{fontSize: 14}} />
+            <Input placeholder="Search for messages or users" style={{fontSize: 14}} />
+          </Item>
+          {/* Search Bar End */}
+
+          {/* List */}
+          <List>
+            {this._renderRow()}
+          </List>
+          {/* List End */}
+
         </Content>
+        {/* === Content End === */}
+
       </Container>
     )
   }
 
 }
 
-const styles = StyleSheet.create({
-  icon: {
-    width: 26,
-    height: 26,
+//NativeBase styling basic obj
+const styles = {
+  searchBar: {
+    backgroundColor: '#ededed',
+    marginLeft: 10,
+    margin: 10,
+    height: 25
   },
-});
+}
