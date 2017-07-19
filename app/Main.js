@@ -1,9 +1,12 @@
-import {TabNavigator} from 'react-navigation';
+import React, {Component} from 'react';
+import {TabNavigator, StackNavigator} from 'react-navigation';
 import Contacts from './Contacts';
 import Chats from './Chats';
 import Settings from './Settings';
+import SignIn from './SignIn';
+import SignUp from './SignUp';
 
-const Main = TabNavigator({
+const Authenticated = TabNavigator({
   Contacts: {
     screen: Contacts
   },
@@ -19,4 +22,24 @@ const Main = TabNavigator({
   }
 });
 
-export default Main;
+const Unauthenticated = StackNavigator({
+  SignIn: {
+    screen: SignIn
+  },
+  SignUp: {
+    screen: SignUp
+  },
+});
+
+export default class Main extends Component{
+
+  render(){
+    const signedIn = true;
+
+    if(signedIn)
+      return <Authenticated/>
+    else
+      return <Unauthenticated/>
+  }
+
+}
