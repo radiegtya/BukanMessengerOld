@@ -23,6 +23,20 @@ export default class Contacts extends Component {
     );
   }
 
+  _renderRow(){
+    return (
+      <ListItem avatar>
+        <Left>
+          <Thumbnail small source={{ uri: 'https://bootdey.com/img/Content/avatar/avatar6.png' }} />
+        </Left>
+        <Body>
+          <Text>Kumar Pratik</Text>
+        </Body>
+        <Right/>
+      </ListItem>
+    )
+  }
+
   render(){
     return (
       <Container>
@@ -31,21 +45,19 @@ export default class Contacts extends Component {
 
         {/* === Content Start === */}
         <Content>
-          <Item rounded style={nbStyles.searchBar}>
+          {/* Search Bar */}
+          <Item rounded style={styles.searchBar}>
             <Icon name="search" style={{fontSize: 14}} />
             <Input placeholder="Search for contacts" style={{fontSize: 14}} />
           </Item>
+          {/* Search Bar End */}
+
+          {/* List */}
           <List>
-            <ListItem avatar>
-              <Left>
-                <Thumbnail small source={{ uri: 'https://bootdey.com/img/Content/avatar/avatar6.png' }} />
-              </Left>
-              <Body>
-                <Text>Kumar Pratik</Text>
-              </Body>
-              <Right/>
-            </ListItem>
+            {this._renderRow()}
           </List>
+          {/* List End */}
+
         </Content>
         {/* === Content End === */}
 
@@ -56,7 +68,7 @@ export default class Contacts extends Component {
 }
 
 //NativeBase styling basic obj
-const nbStyles = {
+const styles = {
   searchBar: {
     backgroundColor: '#ededed',
     marginLeft: 10,
