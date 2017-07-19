@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
-import {View, StyleSheet} from 'react-native';
-import {Container, Content, Header, Left, Body, Right, Text, Title, Icon} from 'native-base';
+import {} from 'react-native';
+import {Container, Content, Header, Left, Body, Right, Text, Title, ListItem, List, Thumbnail, Item, Input, Icon} from 'native-base';
 
 export default class Settings extends Component {
 
   static navigationOptions = {
-    tabBarLabel: 'Settings',
+    title: 'Settings',
     tabBarIcon: ({ tintColor }) => (
       <Icon name="settings" style={{color:tintColor}}/>
     ),
@@ -23,22 +23,86 @@ export default class Settings extends Component {
     );
   }
 
+  _renderRow(){
+    return (
+      <ListItem avatar>
+        <Left>
+          <Thumbnail small source={{ uri: 'https://bootdey.com/img/Content/avatar/avatar6.png' }} />
+        </Left>
+        <Body>
+          <Text>Kumar Pratik</Text>
+        </Body>
+        <Right/>
+      </ListItem>
+    )
+  }
+
   render(){
     return (
       <Container>
+
         {this._renderHeader()}
+
+        {/* === Content Start === */}
         <Content>
-          <Text>This is Settings page</Text>
+          {/* Profile */}
+          <List>
+            <ListItem avatar>
+              <Left>
+                <Thumbnail small source={{ uri: 'https://bootdey.com/img/Content/avatar/avatar6.png' }} />
+              </Left>
+              <Body>
+                <Text>Kumar Pratik</Text>
+                <Text note style={{color: "#4285f4"}}>online</Text>
+              </Body>
+              <Right/>
+            </ListItem>
+            <ListItem>
+              <Text style={{color: '#4285f4'}}>Set Profile Picture</Text>
+            </ListItem>
+          </List>
+          {/* Profile */}
+
+          <ListItem itemDivider/>
+
+          {/* List */}
+          <List>
+            <ListItem>
+              <Left>
+                <Text>BukanChat FAQ</Text>
+              </Left>
+              <Body/>
+              <Right>
+                <Icon name="arrow-forward"/>
+              </Right>
+            </ListItem>
+            <ListItem>
+              <Left>
+                <Text>Contact us</Text>
+              </Left>
+              <Body/>
+              <Right>
+                <Icon name="arrow-forward"/>
+              </Right>
+            </ListItem>
+          </List>
+          {/* List End */}
+
         </Content>
+        {/* === Content End === */}
+
       </Container>
     )
   }
 
 }
 
-const styles = StyleSheet.create({
-  icon: {
-    width: 26,
-    height: 26,
+//NativeBase styling basic obj
+const styles = {
+  searchBar: {
+    backgroundColor: '#ededed',
+    marginLeft: 10,
+    margin: 10,
+    height: 25
   },
-});
+}

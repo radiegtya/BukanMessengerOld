@@ -50,8 +50,8 @@ export default class Chats extends Component {
         <Content>
           {/* Search Bar */}
           <Item rounded style={styles.searchBar}>
-            <Icon name="search" style={{fontSize: 14}} />
-            <Input placeholder="Search for messages or users" style={{fontSize: 14}} />
+            <Icon name="search" style={styles.searchText} />
+            <Input placeholder="Search for messages or users" style={styles.searchText} />
           </Item>
           {/* Search Bar End */}
 
@@ -78,4 +78,7 @@ const styles = {
     margin: 10,
     height: 25
   },
+  searchText: {
+    fontSize: 14,
+  }
 }
