@@ -2,62 +2,15 @@ import React, {Component} from 'react';
 import {TouchableOpacity} from 'react-native';
 import {Container, Content, Header, Left, Body, Right, Text, Title, ListItem, List, Thumbnail, Item, Input, Icon, Button} from 'native-base';
 import RNContacts from 'react-native-contacts';
-import Meteor, {connectMeteor} from 'react-native-meteor';
+import Meteor, {createContainer} from 'react-native-meteor';
 import {MO} from '../MO';
 
-@connectMeteor
-export default class Contacts extends Component {
+class Contacts extends Component {
 
-  static navigationOptions = ({navigation})=> ({
-    title: 'Contacts',
-    tabBarIcon: ({ tintColor }) => (
-      <Icon name="person" style={{color:tintColor}}/>
-    ),
-    headerRight: (
-      <TouchableOpacity onPress={()=>navigation.navigate('NewContact')}>
-        <Icon name="add" style={{color: '#4285f4', marginRight: 10}}/>
-      </TouchableOpacity>
-    )
-  });
-
-  constructor(){
-    super();
-    this.state= {
+  componentWillMount(){
+    this.props.navigation.setParams({
       search: ""
-    };
-  }
-
-  getMeteorData(){
-    const self = this;
-    RNContacts.getAll((err, contacts) => {
-      if(err === 'denied'){
-        // x.x
-      } else {
-        let phoneNumbers = [];
-        contacts.forEach((contact)=>{
-          contact.phoneNumbers.forEach((phone)=>{
-            if(phone.number){
-              const formatedPhoneNumber = "+" + phone.number.replace(new RegExp(/[-\/\\^$*+?.()|[\]{}]/g, 'g'), '').replace(/\s/g,'');
-              phoneNumbers.push(formatedPhoneNumber);
-            }
-          });
-        });
-        phoneNumbers = [...new Set(phoneNumbers)];
-
-        //first param is unique subName (client), second is real subscription name, third is query, then fourth is callback
-        MO.subscribe('contactsSub', 'users', {username: {$in: phoneNumbers}}, ()=>{});
-      }
     });
-
-    return {
-      //first param is collectionName, second is unique subscription name (client)
-      contacts: MO.collection('users', 'contactsSub').find({
-        $and: [
-            {username: {$ne: MO.user().username}},
-            {'profile.firstName': {$regex: this.state.search, $options: 'i'}}
-        ]
-      }),
-    }
   }
 
   _renderRow(contact, i){
@@ -87,13 +40,13 @@ export default class Contacts extends Component {
           {/* Search Bar */}
           <Item rounded style={styles.searchBar}>
             <Icon name="search" style={styles.searchText} />
-            <Input placeholder="Search for contacts" style={styles.searchText} onChangeText={(text) => this.setState({search: text})}/>
+            <Input placeholder="Search for contacts" style={styles.searchText} onChangeText={(text) => this.props.navigation.setParams({search: text})}/>
           </Item>
           {/* Search Bar End */}
 
           {/* List */}
           <List>
-            {this.data.contacts.map((contact,i) => this._renderRow(contact, i))}
+            {this.props.contacts.map((contact,i) => this._renderRow(contact, i))}
           </List>
           {/* List End */}
 
@@ -106,6 +59,53 @@ export default class Contacts extends Component {
 
 }
 
+const container = createContainer((props) => {
+  RNContacts.getAll((err, contacts) => {
+    if(err === 'denied'){
+      // x.x
+    } else {
+      let phoneNumbers = [];
+      contacts.forEach((contact)=>{
+        contact.phoneNumbers.forEach((phone)=>{
+          if(phone.number){
+            const formatedPhoneNumber = "+" + phone.number.replace(new RegExp(/[-\/\\^$*+?.()|[\]{}]/g, 'g'), '').replace(/\s/g,'');
+            phoneNumbers.push(formatedPhoneNumber);
+          }
+        });
+      });
+      phoneNumbers = [...new Set(phoneNumbers)];
+
+      //first param is unique subName (client), second is real subscription name, third is query, then fourth is callback
+      MO.subscribe('contactsSub', 'users', {username: {$in: phoneNumbers}}, ()=>{});
+    }
+  });
+
+  const {params={}} = props.navigation.state;
+
+  return {
+    //first param is collectionName, second is unique subscription name (client)
+    contacts: MO.collection('users', 'contactsSub').find({
+      $and: [
+          {username: {$ne: MO.user().username}},
+          {'profile.firstName': {$regex: params.search, $options: 'i'}}
+      ]
+    }),
+  }
+}, Contacts);
+
+container.navigationOptions = ({navigation})=> ({
+  title: 'Contacts',
+  tabBarIcon: ({ tintColor }) => (
+    <Icon name="person" style={{color:tintColor}}/>
+  ),
+  headerRight: (
+    <TouchableOpacity onPress={()=>navigation.navigate('NewContact')}>
+      <Icon name="add" style={{color: '#4285f4', marginRight: 10}}/>
+    </TouchableOpacity>
+  )
+});
+
+export default container;
 
 //NativeBase styling basic obj
 const styles = {

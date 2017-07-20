@@ -86,7 +86,7 @@ const Main = (props)=>{
    }
   },{
     headerMode: "none",
-    mode: "modal",
+    mode: "modal", 
     initialRouteName: initialRouteName
   });
 

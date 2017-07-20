@@ -8,7 +8,6 @@ class Settings extends Component {
 
   componentWillMount(){
     const {user} = this.props;
-
     //set navigation params to be able using method inside this class
     this.props.navigation.setParams({
       firstName: user.profile.firstName,
