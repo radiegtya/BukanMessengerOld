@@ -1,16 +1,17 @@
 import React, {Component} from 'react';
 import {TouchableOpacity} from 'react-native';
 import {Container, Content, Header, Left, Body, Right, Text, Title, ListItem, List, Thumbnail, Item, Input, Icon} from 'native-base';
-import Meteor from 'react-native-meteor';
+import Meteor, {createContainer} from 'react-native-meteor';
+import {MO} from '../MO';
 
-export default class Settings extends Component {
+class Settings extends Component {
 
-  static navigationOptions = {
-    title: 'Settings',
-    tabBarIcon: ({ tintColor }) => (
-      <Icon name="settings" style={{color:tintColor}}/>
-    ),
-  };
+  // static navigationOptions = {
+  //   title: 'Settings',
+  //   tabBarIcon: ({ tintColor }) => (
+  //     <Icon name="settings" style={{color:tintColor}}/>
+  //   ),
+  // };
 
   _renderHeader(){
     return (
@@ -24,25 +25,14 @@ export default class Settings extends Component {
     );
   }
 
-  _renderRow(){
-    return (
-      <ListItem avatar>
-        <Left>
-          <Thumbnail small source={{ uri: 'https://bootdey.com/img/Content/avatar/avatar6.png' }} />
-        </Left>
-        <Body>
-          <Text>Kumar Pratik</Text>
-        </Body>
-        <Right/>
-      </ListItem>
-    )
-  }
-
   handleSignOut(){
     Meteor.logout();
   }
 
   render(){
+    const {profile} = this.props.user;
+    const name = profile.firstName + " " + profile.lastName;
+
     return (
       <Container>
 
@@ -57,7 +47,7 @@ export default class Settings extends Component {
                 <Thumbnail small source={{ uri: 'https://bootdey.com/img/Content/avatar/avatar6.png' }} />
               </Left>
               <Body>
-                <Text>Kumar Pratik</Text>
+                <Text>{name}</Text>
                 <Text note style={{color: "#4285f4"}}>online</Text>
               </Body>
               <Right/>
@@ -83,7 +73,7 @@ export default class Settings extends Component {
                 <Icon name="arrow-forward"/>
               </Right>
             </ListItem>
-            {/* FAQ end */}
+            {/* FAQ End */}
 
             {/* Contact us */}
             <ListItem>
@@ -95,8 +85,15 @@ export default class Settings extends Component {
                 <Icon name="arrow-forward"/>
               </Right>
             </ListItem>
-            {/* Contacts us end */}
+            {/* Contacts us End */}
 
+          </List>
+          {/* List End */}
+
+          <ListItem itemDivider/>
+
+          {/* List */}
+          <List>
             {/* Sign out */}
             <ListItem>
               <Left>
@@ -107,8 +104,7 @@ export default class Settings extends Component {
               <Body/>
               <Right/>
             </ListItem>
-            {/* Sign out end */}
-
+            {/* Sign out End */}
           </List>
           {/* List End */}
 
@@ -120,6 +116,21 @@ export default class Settings extends Component {
   }
 
 }
+
+const container = createContainer((props) => {
+  return {
+    user: MO.user(),
+  };
+}, Settings);
+
+container.navigationOptions = {
+  title: 'Settings',
+  tabBarIcon: ({ tintColor }) => (
+    <Icon name="settings" style={{color:tintColor}}/>
+  ),
+};
+
+export default container;
 
 //NativeBase styling basic obj
 const styles = {

@@ -1,23 +1,16 @@
 import React, {Component} from 'react';
 import {TabNavigator, StackNavigator} from 'react-navigation';
 import Meteor, {createContainer} from 'react-native-meteor';
-// react-native-meteor-redux
-import initMeteorRedux, {MeteorOffline} from 'react-native-meteor-redux';
-import { AsyncStorage } from 'react-native';
-import { persistStore, autoRehydrate } from 'redux-persist';
-// end react-native-meteor-redux
 
-import Welcome from './Welcome';
-import SignIn from './SignIn';
-import Contacts from './Contacts';
-import Chats from './Chats';
-import Settings from './Settings';
-import PinVerification from './PinVerification';
-import Loading from './Loading';
+import Welcome from './screen/Welcome';
+import SignIn from './screen/SignIn';
+import Contacts from './screen/Contacts';
+import Chats from './screen/Chats';
+import Settings from './screen/Settings';
+import PinVerification from './screen/PinVerification';
+import Loading from './screen/Loading';
 
 Meteor.connect('ws://localhost:3000/websocket');
-
-export const MO = new MeteorOffline();
 
 
 const Main = (props)=>{
