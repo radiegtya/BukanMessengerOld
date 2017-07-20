@@ -3,6 +3,7 @@ import {TouchableOpacity} from 'react-native';
 import {Container, Content, Header, Left, Body, Right, Text, Title, ListItem, List, Thumbnail, Item, Input, Icon} from 'native-base';
 import Meteor, {createContainer} from 'react-native-meteor';
 import {MO} from '../MO';
+import ChatName from '../components/ChatName';
 
 class Chats extends Component {
 
@@ -13,7 +14,7 @@ class Chats extends Component {
           <Thumbnail source={{ uri: 'https://bootdey.com/img/Content/avatar/avatar6.png' }} />
         </Left>
         <Body>
-          <Text>Kumar Pratik</Text>
+          <ChatName name={chat.name} users={chat.users}/>
           <Text note>{chat.lastMessage.message}</Text>
         </Body>
         <Right>
@@ -52,17 +53,8 @@ class Chats extends Component {
 }
 
 const container = createContainer((props) => {
-  // const user = MO.user();
-  //get all chats, that current loggedIn user is on users array
-  // const selector = {users: {$in: [Meteor.userId()]}};
-  const selector = {};
-
-  // MO.subscribe('chatsSub', 'chats', selector, ()=>{});
-  // Meteor.subscribe('chats', {}, ()=>{});
-
   return {
-    chats: MO.collection('chats', 'chatsSub').find(selector)
-    // chats: Meteor.collection('chats').find(selector)
+    chats: MO.collection('chats', 'chatsSub').find({})
   }
 }, Chats);
 

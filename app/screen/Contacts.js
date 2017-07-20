@@ -80,6 +80,10 @@ const container = createContainer((props) => {
     }
   });
 
+  const user = MO.user();
+  //get all chats, that current loggedIn user is on users array
+  MO.subscribe('chatsSub', 'chats', {users: {$in: [user._id]}}, ()=>{});
+
   const {params={}} = props.navigation.state;
 
   return {
