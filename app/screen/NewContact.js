@@ -1,19 +1,51 @@
 import React, {Component} from 'react';
+import {TouchableOpacity} from 'react-native';
 import { Container, Content, Form, Item, Input, Label, Button, Text } from 'native-base';
+import RNContacts from 'react-native-contacts';
 
 export default class NewContact extends Component{
 
-  static navigationOptions = {
-    title: 'New Contact',
+  static navigationOptions = ({navigation}) => {
+    const {params = {}} = navigation.state;
+    let validationCondition = params.firstName != "" && params.mobileNumber != "";
+    return {
+      title: 'New Contact',
+      headerRight: (
+        <TouchableOpacity onPress={()=>params.handleDone(validationCondition)}>
+          <Text style={{color: validationCondition ?'#4285f4':'#d0d0d0', marginRight: 10}}>Done</Text>
+        </TouchableOpacity>
+      )
+    }
   };
 
-  constructor(){
-    super();
-    this.state = {
+  componentWillMount(){
+    //params for navigation
+    this.props.navigation.setParams({
       firstName: "",
       lastName: "",
-      mobileNumber: ""
-    };
+      mobileNumber: "",
+      handleDone: this.handleDone.bind(this)
+    });
+  }
+
+  handleDone(validationCondition){
+    if(validationCondition){
+        const {goBack} = this.props.navigation;
+        const {firstName, lastName, mobileNumber} = this.props.navigation.state.params;
+        RNContacts.addContact({
+          givenName: firstName + " " + lastName,
+          phoneNumbers: [
+            {
+              label: "mobile",
+              number: mobileNumber
+            }
+          ]
+        },(err)=>{
+          if(!err){
+            goBack();
+          }
+        })
+    }
   }
 
   render(){
@@ -21,22 +53,16 @@ export default class NewContact extends Component{
       <Container>
         <Content>
           <Form>
-            <Item inlineLabel>
-              <Label>First Name</Label>
-              <Input onChangeText={(text) => this.setState({firstName: text})}/>
+            <Item>
+              <Input placeholder="First Name" onChangeText={(text) => this.props.navigation.setParams({firstName: text})}/>
             </Item>
             <Item inlineLabel>
-              <Label>Last Name</Label>
-              <Input onChangeText={(text) => this.setState({lastName: text})}/>
+              <Input placeholder="Last Name" onChangeText={(text) => this.props.navigation.setParams({lastName: text})}/>
             </Item>
             <Item inlineLabel>
-              <Label>Mobile Number</Label>
-              <Input onChangeText={(text) => this.setState({mobileNumber: text})}/>
+              <Input placeholder="Mobile Number" onChangeText={(text) => this.props.navigation.setParams({mobileNumber: text})}/>
             </Item>
           </Form>
-          <Button block style={{marginTop: 20}}>
-            <Text>Done</Text>
-          </Button>
         </Content>
       </Container>
     );

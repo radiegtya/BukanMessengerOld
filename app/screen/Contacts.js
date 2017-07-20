@@ -29,7 +29,6 @@ export default class Contacts extends Component {
 
   getMeteorData(){
     const self = this;
-    console.log(MO.user().username)
     RNContacts.getAll((err, contacts) => {
       if(err === 'denied'){
         // x.x
@@ -38,7 +37,7 @@ export default class Contacts extends Component {
         contacts.forEach((contact)=>{
           contact.phoneNumbers.forEach((phone)=>{
             if(phone.number){
-              const formatedPhoneNumber = "+62" + phone.number.replace(new RegExp(/[-\/\\^$*+?.()|[\]{}]/g, 'g'), '').replace(/\s/g,'');
+              const formatedPhoneNumber = "+" + phone.number.replace(new RegExp(/[-\/\\^$*+?.()|[\]{}]/g, 'g'), '').replace(/\s/g,'');
               phoneNumbers.push(formatedPhoneNumber);
             }
           });
