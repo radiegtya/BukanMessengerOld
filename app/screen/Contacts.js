@@ -61,13 +61,16 @@ export default class Contacts extends Component {
   }
 
   _renderRow(contact, i){
+    const {profile} = contact;
+    const name = profile.firstName + " " + profile.lastName;
+
     return (
       <ListItem avatar key={i}>
         <Left>
           <Thumbnail small source={{ uri: 'https://bootdey.com/img/Content/avatar/avatar6.png' }} />
         </Left>
         <Body>
-          <Text>{contact.username}</Text>
+          <Text>{name}</Text>
         </Body>
         <Right/>
       </ListItem>
