@@ -1,27 +1,20 @@
 import React, {Component} from 'react';
-import {} from 'react-native';
+import {TouchableOpacity} from 'react-native';
 import {Container, Content, Header, Left, Body, Right, Text, Title, ListItem, List, Thumbnail, Item, Input, Icon} from 'native-base';
 
 export default class Chats extends Component {
 
-  static navigationOptions = {
+  static navigationOptions = ({navigation})=> ({
     title: 'Chats',
     tabBarIcon: ({ tintColor }) => (
       <Icon name="chatbubbles" style={{color:tintColor}}/>
     ),
-  };
-
-  _renderHeader(){
-    return (
-      <Header>
-        <Left/>
-        <Body>
-          <Title>Chats</Title>
-        </Body>
-        <Right/>
-      </Header>
-    );
-  }
+    headerRight: (
+      <TouchableOpacity onPress={()=>navigation.navigate('New Message')}>
+        <Icon name="create" style={{color: '#4285f4', marginRight: 10}}/>
+      </TouchableOpacity>
+    )
+  });
 
   _renderRow(){
     return (
@@ -43,8 +36,6 @@ export default class Chats extends Component {
   render(){
     return (
       <Container>
-
-        {this._renderHeader()}
 
         {/* === Content Start === */}
         <Content>

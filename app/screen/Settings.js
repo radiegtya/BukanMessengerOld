@@ -6,25 +6,6 @@ import {MO} from '../MO';
 
 class Settings extends Component {
 
-  // static navigationOptions = {
-  //   title: 'Settings',
-  //   tabBarIcon: ({ tintColor }) => (
-  //     <Icon name="settings" style={{color:tintColor}}/>
-  //   ),
-  // };
-
-  _renderHeader(){
-    return (
-      <Header>
-        <Left/>
-        <Body>
-          <Title>Settings</Title>
-        </Body>
-        <Right/>
-      </Header>
-    );
-  }
-
   handleSignOut(){
     Meteor.logout();
   }
@@ -35,8 +16,6 @@ class Settings extends Component {
 
     return (
       <Container>
-
-        {this._renderHeader()}
 
         {/* === Content Start === */}
         <Content>
@@ -123,12 +102,17 @@ const container = createContainer((props) => {
   };
 }, Settings);
 
-container.navigationOptions = {
-  title: 'Settings',
-  tabBarIcon: ({ tintColor }) => (
-    <Icon name="settings" style={{color:tintColor}}/>
-  ),
-};
+container.navigationOptions = ({navigation})=> ({
+    title: 'Settings',
+    tabBarIcon: ({ tintColor }) => (
+      <Icon name="settings" style={{color:tintColor}}/>
+    ),
+    headerRight: (
+      <TouchableOpacity onPress={()=>{}}>
+        <Text style={{color: '#4285f4', marginRight: 10}}>Edit</Text>
+      </TouchableOpacity>
+    )
+  });
 
 export default container;
 

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import {} from 'react-native';
-import {Container, Content, Header, Left, Body, Right, Text, Title, ListItem, List, Thumbnail, Item, Input, Icon} from 'native-base';
+import {TouchableOpacity} from 'react-native';
+import {Container, Content, Header, Left, Body, Right, Text, Title, ListItem, List, Thumbnail, Item, Input, Icon, Button} from 'native-base';
 import RNContacts from 'react-native-contacts';
 import Meteor, {connectMeteor} from 'react-native-meteor';
 import {MO} from '../MO';
@@ -8,15 +8,23 @@ import {MO} from '../MO';
 @connectMeteor
 export default class Contacts extends Component {
 
-  static navigationOptions = {
+  static navigationOptions = ({navigation})=> ({
     title: 'Contacts',
     tabBarIcon: ({ tintColor }) => (
       <Icon name="person" style={{color:tintColor}}/>
     ),
-  }
+    headerRight: (
+      <TouchableOpacity onPress={()=>navigation.navigate('NewContact')}>
+        <Icon name="add" style={{color: '#4285f4', marginRight: 10}}/>
+      </TouchableOpacity>
+    )
+  });
 
   constructor(){
     super();
+    this.state= {
+      search: ""
+    };
   }
 
   getMeteorData(){
@@ -44,20 +52,13 @@ export default class Contacts extends Component {
 
     return {
       //first param is collectionName, second is unique subscription name (client)
-      contacts: MO.collection('users', 'contactsSub').find({username: {$ne: MO.user().username}}),
+      contacts: MO.collection('users', 'contactsSub').find({
+        $and: [
+            {username: {$ne: MO.user().username}},
+            {'profile.firstName': {$regex: this.state.search, $options: 'i'}}
+        ]
+      }),
     }
-  }
-
-  _renderHeader(){
-    return (
-      <Header>
-        <Left/>
-        <Body>
-          <Title>Contacts</Title>
-        </Body>
-        <Right/>
-      </Header>
-    );
   }
 
   _renderRow(contact, i){
@@ -81,14 +82,13 @@ export default class Contacts extends Component {
     return (
       <Container>
 
-        {this._renderHeader()}
 
         {/* === Content Start === */}
         <Content>
           {/* Search Bar */}
           <Item rounded style={styles.searchBar}>
             <Icon name="search" style={styles.searchText} />
-            <Input placeholder="Search for contacts" style={styles.searchText} />
+            <Input placeholder="Search for contacts" style={styles.searchText} onChangeText={(text) => this.setState({search: text})}/>
           </Item>
           {/* Search Bar End */}
 

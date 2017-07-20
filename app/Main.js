@@ -4,10 +4,11 @@ import Meteor, {createContainer} from 'react-native-meteor';
 
 import Welcome from './screen/Welcome';
 import SignIn from './screen/SignIn';
+import PinVerification from './screen/PinVerification';
 import Contacts from './screen/Contacts';
 import Chats from './screen/Chats';
 import Settings from './screen/Settings';
-import PinVerification from './screen/PinVerification';
+import NewContact from './screen/NewContact';
 import Loading from './screen/Loading';
 
 Meteor.connect('ws://localhost:3000/websocket');
@@ -16,7 +17,7 @@ Meteor.connect('ws://localhost:3000/websocket');
 const Main = (props)=>{
   const { status, user, loggingIn } = props;
 
-  const Authenticated = TabNavigator({
+  const AuthenticatedTab = TabNavigator({
     Contacts: {
       screen: Contacts
     },
@@ -29,6 +30,15 @@ const Main = (props)=>{
   }, {
     tabBarOptions: {
       activeTintColor: '#4285f4'
+    }
+  });
+
+  const Authenticated = StackNavigator({
+    AuthenticatedTab: {
+      screen: AuthenticatedTab
+    },
+    NewContact: {
+      screen: NewContact
     }
   });
 
@@ -62,7 +72,7 @@ const Main = (props)=>{
        gesturesEnabled: false
      }
    },
-    Authenticated: {
+   Authenticated: {
      screen: Authenticated,
      navigationOptions: {
        gesturesEnabled: false
