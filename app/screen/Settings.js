@@ -6,43 +6,44 @@ import {MO} from '../MO';
 
 class Settings extends Component {
 
-  componentWillMount(){
-    const {user} = this.props;
-    //set navigation params to be able using method inside this class
-    this.props.navigation.setParams({
-      firstName: user.profile.firstName,
-      lastName: user.profile.lastName,
-      turnOnEdit: false,
-      handleDone: this.handleDone.bind(this)
-    });
-  }
+  _renderHeader(){
+    const {navigation, turnOnEdit, firstName, setState, handleDone} = this.props;
+    const {navigate} = navigation;
+    const validationCondition = firstName != "";
 
-  handleDone(validationCondition){
-    if(validationCondition){
-      const {user} = this.props;
-      const {firstName, lastName} = this.props.navigation.state.params;
-      Meteor.collection('users').update(user._id, {
-        $set: {
-          'profile.firstName': firstName,
-          'profile.lastName': lastName
-        }
-      }, ()=>{
-        this.props.navigation.setParams({turnOnEdit: false});
-      });
-    }
-  }
-
-  handleSignOut(){
-    Meteor.logout();
+    return (
+      <Header>
+        <Left/>
+        <Body>
+          <Text>Settings</Text>
+        </Body>
+        <Right>
+          {!turnOnEdit?
+            (
+              <TouchableOpacity onPress={()=>setState({turnOnEdit: true})}>
+                <Text style={{color: '#4285f4', marginRight: 10}}>Edit</Text>
+              </TouchableOpacity>
+            ):
+            (
+              <TouchableOpacity onPress={()=>handleDone(validationCondition)}>
+                <Text style={{color: validationCondition?'#4285f4':'#d0d0d0', marginRight: 10}}>Done</Text>
+              </TouchableOpacity>
+            )
+          }
+        </Right>
+      </Header>
+    )
   }
 
   render(){
-    const {profile} = this.props.user;
-    const {params = {}} = this.props.navigation.state;
+    const {turnOnEdit, user, firstName, lastName, setState, handleSignOut} = this.props;
+    const {profile} = user;
     const name = profile.firstName + " " + profile.lastName;
 
     return (
       <Container>
+
+        {this._renderHeader()}
 
         {/* === Content Start === */}
         <Content>
@@ -52,7 +53,7 @@ class Settings extends Component {
               <Left>
                 <Thumbnail small source={{ uri: 'https://bootdey.com/img/Content/avatar/avatar6.png' }} />
               </Left>
-              {!params.turnOnEdit?
+              {!turnOnEdit?
                 (
                   <Body>
                     <Text>{name}</Text>
@@ -63,10 +64,10 @@ class Settings extends Component {
                   <Body>
                     <Form>
                       <Item>
-                        <Input placeholder="First Name" value={params.firstName} onChangeText={(text) => this.props.navigation.setParams({firstName: text})}/>
+                        <Input placeholder="First Name" value={firstName} onChangeText={(text) => setState({firstName: text})}/>
                       </Item>
                       <Item>
-                        <Input placeholder="Last Name" value={params.lastName} onChangeText={(text) => this.props.navigation.setParams({lastName: text})}/>
+                        <Input placeholder="Last Name" value={lastName} onChangeText={(text) => setState({lastName: text})}/>
                       </Item>
                     </Form>
                   </Body>
@@ -119,7 +120,7 @@ class Settings extends Component {
             {/* Sign out */}
             <ListItem>
               <Left>
-                <TouchableOpacity onPress={()=>this.handleSignOut()}>
+                <TouchableOpacity onPress={()=>handleSignOut()}>
                   <Text style={{color: '#E20000'}}>Sign out</Text>
                 </TouchableOpacity>
               </Left>
@@ -139,39 +140,68 @@ class Settings extends Component {
 
 }
 
-const container = createContainer((props) => {
+
+const SettingsContainer = createContainer((props) => {
   return {
     user: MO.user(),
   };
 }, Settings);
 
-container.navigationOptions = ({navigation})=> {
-    const {params = {}} = navigation.state;
-    const validationCondition = params.firstName != "";
 
-    let headerRight = (
-      <TouchableOpacity onPress={()=>navigation.setParams({turnOnEdit: true})}>
-        <Text style={{color: '#4285f4', marginRight: 10}}>Edit</Text>
-      </TouchableOpacity>
-    );
-    if(params.turnOnEdit){
-      headerRight = (
-        <TouchableOpacity onPress={()=>params.handleDone(validationCondition)}>
-          <Text style={{color: validationCondition?'#4285f4':'#d0d0d0', marginRight: 10}}>Done</Text>
-        </TouchableOpacity>
-      )
+export default class SettingsStateHolder extends Component {
+
+  static navigationOptions = ({navigation})=> {
+      return {
+        tabBarIcon: ({ tintColor }) => (
+          <Icon name="settings" style={{color:tintColor}}/>
+        ),
+      }
+  };
+
+  constructor(){
+    super();
+    const user = MO.user();
+    this.state = {
+      firstName: user.profile.firstName,
+      lastName: user.profile.lastName,
+      turnOnEdit: false,
+    };
+  }
+
+  handleDone(validationCondition){
+    if(validationCondition){
+      const user = MO.user();
+      const {firstName, lastName} = this.state;
+      Meteor.collection('users').update(user._id, {
+        $set: {
+          'profile.firstName': firstName,
+          'profile.lastName': lastName
+        }
+      }, ()=>{
+        this.setState({turnOnEdit: false});
+      });
     }
+  }
 
-    return {
-      title: 'Settings',
-      tabBarIcon: ({ tintColor }) => (
-        <Icon name="settings" style={{color:tintColor}}/>
-      ),
-      headerRight: headerRight
-    }
-};
+  handleSignOut(){
+    Meteor.logout();
+  }
 
-export default container;
+  render(){
+    return (
+      <SettingsContainer
+        firstName={this.state.firstName}
+        lastName={this.state.lastName}
+        turnOnEdit={this.state.turnOnEdit}
+        handleDone={this.handleDone.bind(this)}
+        handleSignOut={this.handleSignOut.bind(this)}
+        setState={this.setState.bind(this)}
+        {...this.props}
+      />
+    )
+  }
+
+}
 
 //NativeBase styling basic obj
 const styles = {

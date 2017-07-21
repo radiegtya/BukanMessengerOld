@@ -7,10 +7,21 @@ import {MO} from '../MO';
 
 class Contacts extends Component {
 
-  componentWillMount(){
-    this.props.navigation.setParams({
-      search: ""
-    });
+  _renderHeader(){
+    const {navigate} = this.props.navigation;
+    return (
+      <Header>
+        <Left/>
+        <Body>
+          <Text>Contacts</Text>
+        </Body>
+        <Right>
+          <TouchableOpacity onPress={()=>navigate('NewContact')}>
+            <Icon name="add" style={{color: '#4285f4', marginRight: 10}}/>
+          </TouchableOpacity>
+        </Right>
+      </Header>
+    )
   }
 
   _renderRow(contact, i){
@@ -34,6 +45,7 @@ class Contacts extends Component {
     return (
       <Container>
 
+        {this._renderHeader()}
 
         {/* === Content Start === */}
         <Content>
@@ -59,7 +71,7 @@ class Contacts extends Component {
 
 }
 
-const container = createContainer((props) => {
+const ContactsContainer = createContainer((props) => {
   RNContacts.getAll((err, contacts) => {
     if(err === 'denied'){
       // x.x
@@ -84,32 +96,45 @@ const container = createContainer((props) => {
   //get all chats, that current loggedIn user is on users array
   MO.subscribe('chatsSub', 'chats', {users: {$in: [user._id]}}, ()=>{});
 
-  const {params={}} = props.navigation.state;
-
   return {
     //first param is collectionName, second is unique subscription name (client)
     contacts: MO.collection('users', 'contactsSub').find({
       $and: [
           {username: {$ne: MO.user().username}},
-          {'profile.firstName': {$regex: params.search, $options: 'i'}}
+          {'profile.firstName': {$regex: props.search, $options: 'i'}}
       ]
     }),
   }
 }, Contacts);
 
-container.navigationOptions = ({navigation})=> ({
-  title: 'Contacts',
-  tabBarIcon: ({ tintColor }) => (
-    <Icon name="person" style={{color:tintColor}}/>
-  ),
-  headerRight: (
-    <TouchableOpacity onPress={()=>navigation.navigate('NewContact')}>
-      <Icon name="add" style={{color: '#4285f4', marginRight: 10}}/>
-    </TouchableOpacity>
-  )
-});
 
-export default container;
+export default class ContactsStateHolder extends Component {
+
+  constructor(){
+    super();
+    this.state = {
+      search: ""
+    };
+  }
+
+  static navigationOptions = ({navigation})=> ({
+    tabBarIcon: ({ tintColor }) => (
+      <Icon name="person" style={{color:tintColor}}/>
+    ),
+  });
+
+  render(){
+    const {search} = this.state;
+
+    return (
+      <ContactsContainer
+        search={search}
+        {...this.props}
+      />
+    )
+  }
+
+}
 
 //NativeBase styling basic obj
 const styles = {

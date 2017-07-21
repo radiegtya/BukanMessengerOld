@@ -28,6 +28,7 @@ const Main = (props)=>{
       screen: Settings
     }
   }, {
+    headerMode: 'none',
     tabBarOptions: {
       activeTintColor: '#4285f4'
     }
@@ -40,6 +41,8 @@ const Main = (props)=>{
     NewContact: {
       screen: NewContact
     }
+  }, {
+      headerMode: 'none',
   });
 
   const Unauthenticated = StackNavigator({
@@ -86,7 +89,7 @@ const Main = (props)=>{
    }
   },{
     headerMode: "none",
-    mode: "modal", 
+    mode: "modal",
     initialRouteName: initialRouteName
   });
 

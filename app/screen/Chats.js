@@ -7,6 +7,23 @@ import ChatName from '../components/ChatName';
 
 class Chats extends Component {
 
+  _renderHeader(){
+    const {navigate} = this.props.navigation;
+    return (
+      <Header>
+        <Left/>
+        <Body>
+          <Text>Chats</Text>
+        </Body>
+        <Right>
+          <TouchableOpacity onPress={()=>navigate('NewMessage')}>
+            <Icon name="create" style={{color: '#4285f4', marginRight: 10}}/>
+          </TouchableOpacity>
+        </Right>
+      </Header>
+    )
+  }
+
   _renderRow(chat, i){
     return (
       <ListItem avatar key={i}>
@@ -27,6 +44,8 @@ class Chats extends Component {
   render(){
     return (
       <Container>
+
+        {this._renderHeader()}
 
         {/* === Content Start === */}
         <Content>
@@ -52,25 +71,19 @@ class Chats extends Component {
 
 }
 
-const container = createContainer((props) => {
+const ChatsContainer = createContainer((props) => {
   return {
     chats: MO.collection('chats', 'chatsSub').find({})
   }
 }, Chats);
 
-container.navigationOptions = ({navigation})=> ({
-  title: 'Chats',
+ChatsContainer.navigationOptions = ({navigation})=> ({
   tabBarIcon: ({ tintColor }) => (
     <Icon name="chatbubbles" style={{color:tintColor}}/>
   ),
-  headerRight: (
-    <TouchableOpacity onPress={()=>navigation.navigate('New Message')}>
-      <Icon name="create" style={{color: '#4285f4', marginRight: 10}}/>
-    </TouchableOpacity>
-  )
 });
 
-export default container;
+export default ChatsContainer;
 
 //NativeBase styling basic obj
 const styles = {
